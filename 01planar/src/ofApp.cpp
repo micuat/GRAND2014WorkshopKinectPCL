@@ -27,7 +27,7 @@ inline ofxPCL::PointXYZRGBCloud getPointCloudFromKinect(ofxKinect &kinect, int s
 	
 	cloud->width = ceil((float)w / (float)step) * ceil((float)h / (float)step);
 	cloud->height = 1;
-	cloud->is_dense = false;
+	cloud->is_dense = true;
 	cloud->points.resize(cloud->width * cloud->height);
 	for(int y = 0; y < h; y += step) {
 		for(int x = 0; x < w; x += step) {
@@ -55,25 +55,33 @@ void ofApp::draw(){
 	
 	easyCam.begin();
 	
-	ofxPCL::PointXYZRGBCloud cloud = getPointCloudFromKinect(kinect, 8);
-	vector<ofxPCL::PointXYZRGBCloud> clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, mouseX, 10, 1);
+	ofxPCL::PointXYZRGBCloud cloud = getPointCloudFromKinect(kinect, 4);
+	vector<ofxPCL::PointXYZRGBCloud> clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, mouseX / 20.0f, 50, 10);
+	//vector<ofxPCL::PointXYZRGBCloud> clouds = ofxPCL::clusterExtraction(cloud, pcl::SACMODEL_PLANE, mouseX / 20.0f, 50, 10);
 	
 	ofMesh mesh;
 	
-	if( clouds.size() > 0 )
-		mesh = ofxPCL::toOF(clouds.at(0));
-	
 	ofPushMatrix();
-	// the projected points are 'upside down' and 'backwards'
 	ofScale(1, -1, -1);
-	ofTranslate(0, 0, -1000); // center the points a bit
+	ofTranslate(0, 0, -1000);
 	
-	mesh.drawVertices();
+	for( int i = 0; i < clouds.size(); i++ ) {
+		mesh = ofxPCL::toOF(clouds.at(i));
+		
+		ofColor color;
+		color.setHsb(255 * i / 10, 255, 255);
+		ofSetColor(color);
+		mesh.clearColors();
+		mesh.drawVertices();
+	}
 	
 	ofPopMatrix();
 	
 	easyCam.end();
-
+	
+	ofSetColor(255);
+	ofDrawBitmapString("FPS: " + ofToString(ofGetFrameRate()), 20, 50);
+	ofDrawBitmapString("Clusters: " + ofToString(clouds.size()), 20, 75);
 }
 
 //--------------------------------------------------------------

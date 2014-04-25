@@ -28,7 +28,7 @@ inline ofxPCL::PointXYZRGBCloud getPointCloudFromKinect(ofxKinect &kinect, int s
 	
 	cloud->width = ceil((float)w / (float)step) * ceil((float)h / (float)step);
 	cloud->height = 1;
-	cloud->is_dense = false;
+	cloud->is_dense = true;
 	cloud->points.resize(cloud->width * cloud->height);
 	for(int y = 0; y < h; y += step) {
 		for(int x = 0; x < w; x += step) {
@@ -60,7 +60,7 @@ void ofApp::draw(){
 
 	ofxPCL::PointXYZRGBNormalCloud cloud_with_normals(new ofxPCL::PointXYZRGBNormalCloud::element_type);
 	ofxPCL::normalEstimation(cloud, cloud_with_normals);
-	ofMesh mesh = ofxPCL::triangulate(cloud_with_normals, 500);
+	ofMesh mesh = ofxPCL::triangulate(cloud_with_normals, mouseX);
 	
 	ofPushMatrix();
 	// the projected points are 'upside down' and 'backwards'
