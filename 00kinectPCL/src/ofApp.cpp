@@ -3,6 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetLogLevel(OF_LOG_VERBOSE);
+	ofSetVerticalSync(true);
 	
 	ofEnableDepthTest();
 	
@@ -10,7 +11,7 @@ void ofApp::setup(){
 	kinect.init();
 	kinect.open();
 	
-	ofSetFrameRate(30);
+	ofSetFrameRate(15);
 }
 
 //--------------------------------------------------------------
@@ -55,7 +56,7 @@ void ofApp::draw(){
 	
 	easyCam.begin();
 	
-	ofxPCL::PointXYZRGBCloud cloud = getPointCloudFromKinect(kinect, 8);
+	ofxPCL::PointXYZRGBCloud cloud = getPointCloudFromKinect(kinect, 4);
 
 	ofxPCL::PointXYZRGBNormalCloud cloud_with_normals(new ofxPCL::PointXYZRGBNormalCloud::element_type);
 	ofxPCL::normalEstimation(cloud, cloud_with_normals);
@@ -78,7 +79,9 @@ void ofApp::draw(){
 	ofPopMatrix();
 	
 	easyCam.end();
-
+	
+	ofSetColor(255);
+	ofDrawBitmapString("FPS: " + ofToString(ofGetFrameRate()), 20, 50);
 }
 
 //--------------------------------------------------------------
