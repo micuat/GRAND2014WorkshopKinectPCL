@@ -56,8 +56,12 @@ void ofApp::draw(){
 	easyCam.begin();
 	
 	ofxPCL::PointXYZRGBCloud cloud = getPointCloudFromKinect(kinect, 4);
+	
+	// planar segmentation
 	vector<ofxPCL::PointXYZRGBCloud> clouds = ofxPCL::segmentation(cloud, pcl::SACMODEL_PLANE, mouseX / 20.0f, 50, 10);
-	//vector<ofxPCL::PointXYZRGBCloud> clouds = ofxPCL::clusterExtraction(cloud, pcl::SACMODEL_PLANE, mouseX / 20.0f, 50, 10);
+	
+	// Euclidean cluster extraction
+	//vector<ofxPCL::PointXYZRGBCloud> clouds = ofxPCL::clusterExtraction(cloud, mouseX / 20.0f, 50, 10);
 	
 	ofMesh mesh;
 	
@@ -73,6 +77,12 @@ void ofApp::draw(){
 		ofSetColor(color);
 		mesh.clearColors();
 		mesh.drawVertices();
+		
+		// draw centroid
+		ofPushMatrix();
+		ofTranslate(mesh.getCentroid());
+		ofDrawAxis(100);
+		ofPopMatrix();
 	}
 	
 	ofPopMatrix();
