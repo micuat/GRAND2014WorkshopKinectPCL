@@ -1,2 +1,2 @@
 ofxKinect
-ofxOpenCv
+ofxPCL
